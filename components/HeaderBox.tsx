@@ -1,5 +1,6 @@
 import React from "react";
 
+// current component ⚛️
 const HeaderBox = ({
   type = "title",
   title,
