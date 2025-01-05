@@ -3,11 +3,14 @@ import React from "react";
 // components
 import HeaderBox from "@/components/HeaderBox";
 import TotalBalanceBox from "@/components/TotalBalanceBox";
+import RightSidebar from "@/components/RightSidebar";
 
 // current page 📄
 const HomePage = () => {
   const loggedIn = {
-    firstname: "Bunny",
+    firstName: "Bunny",
+    lastName: "Encoder",
+    email: "bunnyEncoder@email.com",
   };
   return (
     <section className="home">
@@ -16,7 +19,7 @@ const HomePage = () => {
           <HeaderBox
             type="greeting"
             title="Welcome, "
-            user={loggedIn?.firstname ?? "Guest"}
+            user={loggedIn?.firstName ?? "Guest"}
             subtext="Access and manage your account and transactions with ease."
           />
 
@@ -26,7 +29,12 @@ const HomePage = () => {
             totalCurrentBalance={15000.35}
           />
         </header>
+
+        {/* TODO: recent transactions */}
+        Recent transactions
       </div>
+
+      <RightSidebar user={loggedIn} transactions={[]} banks={[]} />
     </section>
   );
 };
