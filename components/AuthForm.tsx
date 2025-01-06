@@ -12,14 +12,10 @@ import { useForm } from "react-hook-form";
 
 // form UI
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { Form } from "@/components/ui/form";
+import { Loader2 } from "lucide-react";
+
+// components
 import CustomFormField from "./CustomFormField";
 
 // current component ⚛️
@@ -30,10 +26,12 @@ const AuthForm = ({
 }) => {
   // states
   const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Shad Form
-  const form = useForm<z.infer<typeof authFormSchema>>({
-    resolver: zodResolver(authFormSchema),
+  const formSchema = authFormSchema(type);
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
       password: "",
@@ -41,10 +39,17 @@ const AuthForm = ({
   });
 
   // handlers 🤙
-  function onSubmit(values: z.infer<typeof authFormSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log("Submitting form...");
+    setIsLoading(true);
+
+    try {
+      console.log(values);
+    } catch (error) {
+      console.error("❌ There was a error in submitting AuthForm:\n", error);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -87,6 +92,66 @@ const AuthForm = ({
         : (
           <>
             <Form {...form}>
+              {type === "sign-up" && (
+                <>
+                  {/* first name */}
+                  <CustomFormField
+                    control={form.control}
+                    name="firstName"
+                    label="First Name"
+                    placeholder="John"
+                  />
+
+                  {/* last name */}
+                  <CustomFormField
+                    control={form.control}
+                    name="firstName"
+                    label="First Name"
+                    placeholder="Doe"
+                  />
+
+                  {/* address */}
+                  <CustomFormField
+                    control={form.control}
+                    name="address"
+                    label="Address"
+                    placeholder="Enter permanent address"
+                  />
+
+                  {/* address */}
+                  <CustomFormField
+                    control={form.control}
+                    name="state"
+                    label="State"
+                    placeholder="eg: Punjab"
+                  />
+
+                  {/* postal code */}
+                  <CustomFormField
+                    control={form.control}
+                    name="postalCode"
+                    label="Postal Code"
+                    placeholder="eg: 400005"
+                  />
+
+                  {/* dob */}
+                  <CustomFormField
+                    control={form.control}
+                    name="dateOfBirth"
+                    label="Date of Birth"
+                    placeholder="YYYY-MM-DD"
+                  />
+
+                  {/* aadhar number */}
+                  <CustomFormField
+                    control={form.control}
+                    name="aadharCardNumber"
+                    label="Aadhar Card Number"
+                    placeholder="eg: 1234 5678 9012"
+                  />
+                </>
+              )}
+
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
                 className="space-y-8"
@@ -108,9 +173,43 @@ const AuthForm = ({
                 />
 
                 {/* Submit button */}
-                <Button type="submit" className="form-btn">Submit</Button>
+                <div className="flex flex-col gap-4">
+                  <Button
+                    type="submit"
+                    className="form-btn"
+                    disabled={isLoading}
+                  >
+                    {isLoading
+                      ? (
+                        <>
+                          <Loader2
+                            size={20}
+                            className="animate-spin"
+                          />{" "}
+                          &nbsp; Loading...
+                        </>
+                      )
+                      : type === "sign-in"
+                      ? "Sign In"
+                      : "Sign Up"}
+                  </Button>
+                </div>
               </form>
             </Form>
+
+            <footer className="flex justify-center gap-1">
+              <p className="text-14 font-normal text-gray-600">
+                {type === "sign-in"
+                  ? "Don't have an account?"
+                  : "Already have an account?"}
+              </p>
+              <Link
+                href={type === "sign-in" ? "/sign-up" : "/sign-in"}
+                className="form-link"
+              >
+                {type === "sign-in" ? "Sign Up" : "Sign In"}
+              </Link>
+            </footer>
           </>
         )}
     </section>

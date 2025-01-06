@@ -9,6 +9,20 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
+// form utils
+import { z } from "zod";
+import { Control, FieldPath } from "react-hook-form";
+import { authFormSchema } from "@/lib/utils";
+
+// eslint-disable-next-line
+const formSchema = authFormSchema("sign-up");
+interface CustomFormField {
+  control: Control<z.infer<typeof formSchema>>;
+  name: FieldPath<z.infer<typeof formSchema>>;
+  label: string;
+  placeholder: string;
+}
+
 // current component ⚛️
 const CustomFormField = ({
   control,
