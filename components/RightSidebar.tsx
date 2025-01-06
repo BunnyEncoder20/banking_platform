@@ -1,8 +1,11 @@
+import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+
+// components
 import BankCard from "./BankCard";
 
+// current component ⚛️
 const RightSidebar = ({
   user,
   transactions,
@@ -51,19 +54,21 @@ const RightSidebar = ({
           </Link>
         </div>
 
-        {banks?.length > 0 ? (
+        {banks?.length > 0 && (
           <div className="relative flex flex-1 flex-col items-center justify-center gap-5">
             <div className="relative z-10">
-              <BankCard 
+              <BankCard
                 key={banks[0].$id}
                 account={banks[0]}
                 userName={`${user.firstName} ${user.lastName}`}
                 showBalance={false}
               />
             </div>
+
+            {/* if multiple banks accounts, we showing ✌️ cards */}
             {banks[1] && (
               <div className="absolute z-0 right-0 top-8 w-[90%]">
-                <BankCard 
+                <BankCard
                   key={banks[1].$id}
                   account={banks[1]}
                   userName={`${user.firstName} ${user.lastName}`}
