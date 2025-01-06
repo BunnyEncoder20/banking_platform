@@ -14,11 +14,13 @@ import { useForm } from "react-hook-form";
 // form UI
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import { LassoSelect, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 // components
 import CustomFormField from "./CustomFormField";
-import { PassThrough } from "stream";
+import { appwrite_signIn, appwrite_signUp } from "@/lib/actions/user.actions";
+
+// server actions
 
 // current component ⚛️
 const AuthForm = ({
@@ -49,21 +51,20 @@ const AuthForm = ({
     try {
       // TODO: SignUp with appwrite
       if (type === "sign-up") {
-        // const newUser = await signUp(data);
+        const newUser = await appwrite_signUp(data);
+        setUser(newUser);
       }
 
       if (type === "sign-in") {
-        // const response = await signIn({
-        //   email: data.email,
-        //   password: data.password,
-        // });
+        const response = await appwrite_signIn(data.email, data.password);
 
-        // if (response) {
-        //   console.log("User data fetched:", response);
-        //   router.push("/");
-        // } else {
-        //   throw new Error("Did not get user back from backend");
-        // }
+        if (response) {
+          console.log("User data fetched:", response);
+          setUser(response);
+          router.push("/");
+        } else {
+          throw new Error("Did not get user back from backend");
+        }
       }
       // TODO: create plaid token
     } catch (error) {

@@ -218,3 +218,7 @@ export const authFormSchema = (type: string) =>
     email: z.string().email(),
     password: z.string().min(8),
   });
+
+export const errorHander = (message: string, error: any) => {
+  console.error(`❌ ${message}:\n`, error);
+};
