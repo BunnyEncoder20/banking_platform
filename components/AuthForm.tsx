@@ -108,7 +108,7 @@ const AuthForm = ({
                 />
 
                 {/* Submit button */}
-                <Button type="submit">Submit</Button>
+                <Button type="submit" className="form-btn">Submit</Button>
               </form>
             </Form>
           </>
