@@ -201,14 +201,18 @@ export const authFormSchema = (type: string) =>
     // sign up only
     firstName: type === "sign-in" ? z.string().optional() : z.string().min(3),
     lastName: type === "sign-in" ? z.string().optional() : z.string().min(3),
-    address1: type === "sign-in" ? z.string().optional() : z.string().max(50),
+    address: type === "sign-in" ? z.string().optional() : z.string().max(50),
     city: type === "sign-in" ? z.string().optional() : z.string().max(50),
-    state:
-      type === "sign-in" ? z.string().optional() : z.string().min(2).max(2),
+    state: type === "sign-in" ? z.string().optional() : z.string().min(2),
     postalCode:
-      type === "sign-in" ? z.string().optional() : z.string().length(6),
+      type === "sign-in"
+        ? z.string().optional()
+        : z.string().length(6, "Postal code must be 6 digits long"),
     dateOfBirth: type === "sign-in" ? z.string().optional() : z.string().min(3),
-    ssn: type === "sign-in" ? z.string().optional() : z.string().min(3),
+    aadharCardNumber:
+      type === "sign-in"
+        ? z.string().optional()
+        : z.string().length(12, "Aadhar number must be 12 digits long"),
 
     // in both forms
     email: z.string().email(),

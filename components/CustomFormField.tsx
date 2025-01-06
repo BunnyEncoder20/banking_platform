@@ -34,6 +34,7 @@ const CustomFormField = ({
     <FormField
       control={control}
       name={name}
+      defaultValue=""
       render={({ field }) => (
         <div className="form-item">
           <FormLabel className="form-label">

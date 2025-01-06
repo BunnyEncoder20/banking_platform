@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 // form utils
 import { authFormSchema } from "@/lib/utils";
@@ -13,10 +14,11 @@ import { useForm } from "react-hook-form";
 // form UI
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import { Loader2 } from "lucide-react";
+import { LassoSelect, Loader2 } from "lucide-react";
 
 // components
 import CustomFormField from "./CustomFormField";
+import { PassThrough } from "stream";
 
 // current component ⚛️
 const AuthForm = ({
@@ -24,9 +26,10 @@ const AuthForm = ({
 }: {
   type: string;
 }) => {
-  // states
+  // states & hooks
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   // Shad Form
   const formSchema = authFormSchema(type);
@@ -39,18 +42,36 @@ const AuthForm = ({
   });
 
   // handlers 🤙
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
     console.log("Submitting form...");
     setIsLoading(true);
 
     try {
-      console.log(values);
+      // TODO: SignUp with appwrite
+      if (type === "sign-up") {
+        // const newUser = await signUp(data);
+      }
+
+      if (type === "sign-in") {
+        // const response = await signIn({
+        //   email: data.email,
+        //   password: data.password,
+        // });
+
+        // if (response) {
+        //   console.log("User data fetched:", response);
+        //   router.push("/");
+        // } else {
+        //   throw new Error("Did not get user back from backend");
+        // }
+      }
+      // TODO: create plaid token
     } catch (error) {
       console.error("❌ There was a error in submitting AuthForm:\n", error);
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   return (
     <section className="auth-form">
@@ -94,21 +115,23 @@ const AuthForm = ({
             <Form {...form}>
               {type === "sign-up" && (
                 <>
-                  {/* first name */}
-                  <CustomFormField
-                    control={form.control}
-                    name="firstName"
-                    label="First Name"
-                    placeholder="John"
-                  />
+                  <div className="flex gap-4">
+                    {/* first name */}
+                    <CustomFormField
+                      control={form.control}
+                      name="firstName"
+                      label="First Name"
+                      placeholder="John"
+                    />
 
-                  {/* last name */}
-                  <CustomFormField
-                    control={form.control}
-                    name="firstName"
-                    label="First Name"
-                    placeholder="Doe"
-                  />
+                    {/* last name */}
+                    <CustomFormField
+                      control={form.control}
+                      name="lastName"
+                      label="Last Name"
+                      placeholder="Doe"
+                    />
+                  </div>
 
                   {/* address */}
                   <CustomFormField
@@ -118,37 +141,50 @@ const AuthForm = ({
                     placeholder="Enter permanent address"
                   />
 
-                  {/* address */}
+                  {/* City */}
                   <CustomFormField
                     control={form.control}
-                    name="state"
-                    label="State"
-                    placeholder="eg: Punjab"
+                    name="city"
+                    label="City"
+                    placeholder="Enter your city"
                   />
 
-                  {/* postal code */}
-                  <CustomFormField
-                    control={form.control}
-                    name="postalCode"
-                    label="Postal Code"
-                    placeholder="eg: 400005"
-                  />
+                  <div className="flex gap-4">
+                    {/* TODO: try to make this into a dropdown menu: shadcn select */}
+                    {/* State */}
+                    <CustomFormField
+                      control={form.control}
+                      name="state"
+                      label="State"
+                      placeholder="eg: Punjab"
+                    />
 
-                  {/* dob */}
-                  <CustomFormField
-                    control={form.control}
-                    name="dateOfBirth"
-                    label="Date of Birth"
-                    placeholder="YYYY-MM-DD"
-                  />
+                    {/* postal code */}
+                    <CustomFormField
+                      control={form.control}
+                      name="postalCode"
+                      label="Postal Code"
+                      placeholder="eg: 400005"
+                    />
+                  </div>
 
-                  {/* aadhar number */}
-                  <CustomFormField
-                    control={form.control}
-                    name="aadharCardNumber"
-                    label="Aadhar Card Number"
-                    placeholder="eg: 1234 5678 9012"
-                  />
+                  <div className="flex gap-4">
+                    {/* dob */}
+                    <CustomFormField
+                      control={form.control}
+                      name="dateOfBirth"
+                      label="Date of Birth"
+                      placeholder="YYYY-MM-DD"
+                    />
+
+                    {/* aadhar number */}
+                    <CustomFormField
+                      control={form.control}
+                      name="aadharCardNumber"
+                      label="Aadhar Card Number"
+                      placeholder="eg: 1234 5678 9012"
+                    />
+                  </div>
                 </>
               )}
 
