@@ -1,7 +1,15 @@
 import React from "react";
 
-const signUp = () => {
-  return <div>signUp</div>;
+// components
+import AuthForm from "@/components/AuthForm";
+
+// current page 📄
+const signIn = () => {
+  return (
+    <section className="flex-center size-full max-sm:px-6">
+      <AuthForm type="sign-up" />
+    </section>
+  );
 };
 
-export default signUp;
+export default signIn;
