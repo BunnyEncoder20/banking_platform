@@ -53,19 +53,21 @@ const AuthForm = ({
       if (type === "sign-up") {
         const newUser = await appwrite_signUp(data);
         setUser(newUser);
+        router.push("/");
       }
 
       if (type === "sign-in") {
-        const response = await appwrite_signIn(data.email, data.password);
+        // const response = await appwrite_signIn(data.email, data.password);
 
-        if (response) {
-          console.log("User data fetched:", response);
-          setUser(response);
-          router.push("/");
-        } else {
-          throw new Error("Did not get user back from backend");
-        }
+        // if (response) {
+        //   console.log("User data fetched:", response);
+        //   setUser(response);
+        //   router.push("/");
+        // } else {
+        //   throw new Error("Did not get user back from backend");
+        // }
       }
+
       // TODO: create plaid token
     } catch (error) {
       console.error("❌ There was a error in submitting AuthForm:\n", error);

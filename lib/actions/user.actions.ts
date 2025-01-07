@@ -20,19 +20,10 @@ export const appwrite_signIn = async (email: string, password: string) => {
 };
 
 export const appwrite_signUp = async (userData: SignUpParams) => {
-  const {
-    firstName,
-    lastName,
-    // address,
-    // city,
-    // state,
-    // postalCode,
-    // dateOfBirth,
-    // aadharCardNumber,
-    email,
-    password,
-  } = userData;
+  // destructure
+  const { firstName, lastName, email, password } = userData;
   console.log(`Trying to sign up user ${firstName} ${lastName}...`);
+
   try {
     const { account } = await createAdminClient();
 
@@ -64,7 +55,8 @@ export const appwrite_signUp = async (userData: SignUpParams) => {
 export async function getLoggedInUser() {
   try {
     const { account } = await createSessionClient();
-    return await account.get();
+    const user = await account.get();
+    return parseStringify(user);
   } catch (error) {
     errorHander("There was a error in getLoggedInUser", error);
     return null;
