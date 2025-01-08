@@ -12,7 +12,10 @@ import {
 } from "react-plaid-link";
 
 // server action
-import { createLinkToken } from "@/lib/actions/user.actions";
+import {
+  createLinkToken,
+  exchangePublicToken,
+} from "@/lib/actions/user.actions";
 
 // current component ⚛️
 const PlaidLink = ({
@@ -38,8 +41,7 @@ const PlaidLink = ({
   // plaid handlers
   const onSuccess = useCallback<PlaidLinkOnSuccess>(
     async (publicToken: string) => {
-      // TODO: make this server action
-      // await exchangePublicToken({ publicToken, user })
+      await exchangePublicToken({ publicToken, user });
       router.push("/");
     },
     [user],

@@ -55,7 +55,7 @@ const AuthForm = ({
         const signUp_data = {
           firstName: data.firstName!,
           lastName: data.lastName!,
-          address1: data.address!,
+          address: data.address!,
           city: data.city!,
           state: data.state!,
           postalCode: data.postalCode!,
@@ -64,7 +64,7 @@ const AuthForm = ({
           email: data.email,
           password: data.password,
         };
-        const newUser = await appwrite_signUp(data);
+        const newUser = await appwrite_signUp(signUp_data);
         setUser(newUser);
       }
 
