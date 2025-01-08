@@ -44,28 +44,30 @@ const AuthForm = ({
   });
 
   // handlers 🤙
+  console.log(`Type: ${type} | User: ${user}`);
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     console.log("Submitting form...");
     setIsLoading(true);
 
     try {
-      // TODO: SignUp with appwrite
       if (type === "sign-up") {
         const newUser = await appwrite_signUp(data);
         setUser(newUser);
-        router.push("/");
       }
 
       if (type === "sign-in") {
-        // const response = await appwrite_signIn(data.email, data.password);
+        const response = await appwrite_signIn({
+          email: data.email,
+          password: data.password,
+        });
 
-        // if (response) {
-        //   console.log("User data fetched:", response);
-        //   setUser(response);
-        //   router.push("/");
-        // } else {
-        //   throw new Error("Did not get user back from backend");
-        // }
+        if (response) {
+          console.log("✅ User data fetched:", response);
+          setUser(response);
+          router.push("/");
+        } else {
+          throw new Error("❌ Did not get user data back from backend");
+        }
       }
 
       // TODO: create plaid token
@@ -97,7 +99,7 @@ const AuthForm = ({
 
         <div className="flex flex-col gap-1 md:gap-3">
           <h1 className="text-24 lg:text-36 font-semibold text-gray-900">
-            {user ? "Link Account" : type === "sign-in" ? "Sign In" : "Sign Up"}
+            {user ? "Link Account" : type === "sign-in" ? "Log In" : "Sign Up"}
             <p className="text-16 font-normal text-gray-600">
               {user
                 ? "Link your account to get started"
@@ -111,6 +113,7 @@ const AuthForm = ({
         ? (
           <div className="flex flex-col gap-4">
             {/* TODO: PlaidLink */}
+            Link Plaid Account
           </div>
         )
         : (

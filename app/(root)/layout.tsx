@@ -1,16 +1,27 @@
-import MobileNav from "@/components/MobileNav";
-import Sidebar from "@/components/Sidebar";
-import { getLoggedInUser } from "@/lib/actions/user.actions";
 import Image from "next/image";
 import React from "react";
+import { redirect } from "next/navigation";
 
+// components
+import MobileNav from "@/components/MobileNav";
+import Sidebar from "@/components/Sidebar";
+
+// server action
+import { getLoggedInUser } from "@/lib/actions/user.actions";
+
+// layout 🧱
 const rootLayout = async ({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) => {
-  // TODO: replace temp user data
+  // fetch user data
   const loggedInUser = await getLoggedInUser();
+  if (!loggedInUser) {
+    console.log("❌ user not authenticated, redirecting...");
+    redirect("/sign-in");
+  }
+  console.log("Fetched LoggedIn User:\n", loggedInUser);
 
   return (
     <main className="flex h-screen w-full font-inter">

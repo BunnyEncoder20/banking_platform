@@ -9,13 +9,14 @@ import { sidebarLinks } from "@/constants";
 // utils
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
-import Footer from "./Footer";
 
 // components
+import Footer from "./Footer";
 
+// current component ⚛️
 const Sidebar = ({ user }: SiderbarProps) => {
+  // path
   const pathname = usePathname();
-
   return (
     <section className="sidebar">
       <nav className="flex flex-col gap-4">

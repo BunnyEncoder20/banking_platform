@@ -219,6 +219,6 @@ export const authFormSchema = (type: string) =>
     password: z.string().min(8),
   });
 
-export const errorHander = (message: string, error: any) => {
+export const errorHandler = (message: string, error: any) => {
   console.error(`❌ ${message}:\n`, error);
 };
