@@ -3,7 +3,7 @@
 // appwrite client
 import { createAdminClient, createSessionClient } from "@/lib/appwrite";
 
-// Plaid
+// Plaid & dwolla
 import { plaidClient } from "@/lib/plaid";
 import {
   CountryCode,
@@ -11,14 +11,13 @@ import {
   ProcessorTokenCreateRequestProcessorEnum,
   Products,
 } from "plaid";
+import { addFundingSource } from "./dwolla.actions";
 
 // utils
 import { cookies } from "next/headers";
 import { ID } from "node-appwrite";
-
-// error handler
-import { encryptId, errorHandler, parseStringify } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
+import { encryptId, errorHandler, parseStringify } from "@/lib/utils";
 
 /* ----------------------- Server Actions ----------------------- */
 
@@ -114,11 +113,11 @@ export const createLinkToken = async (user: User) => {
     const tokenParams = {
       user: {
         client_user_id: user.$id,
-        client_name: user.name,
-        products: ["auth", "transactions"] as Products[],
-        language: "en",
-        conuntry_codes: ["IN"] as CountryCode[],
       },
+      client_name: user.name,
+      products: ["auth"] as Products[],
+      language: "en",
+      country_codes: ["US"] as CountryCode[],
     };
 
     console.log("Creating link token...");
