@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 // components
-import BankCard from "./BankCard";
+import BankCard from "@/components/BankCard";
 
 // current component ⚛️
 const RightSidebar = ({

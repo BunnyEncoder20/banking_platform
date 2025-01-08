@@ -17,10 +17,11 @@ import { Form } from "@/components/ui/form";
 import { Loader2 } from "lucide-react";
 
 // components
-import CustomFormField from "./CustomFormField";
-import { appwrite_signIn, appwrite_signUp } from "@/lib/actions/user.actions";
+import CustomFormField from "@/components/CustomFormField";
+import PlaidLink from "@/components/PlaidLink";
 
 // server actions
+import { appwrite_signIn, appwrite_signUp } from "@/lib/actions/user.actions";
 
 // current component ⚛️
 const AuthForm = ({
@@ -112,8 +113,10 @@ const AuthForm = ({
       {user
         ? (
           <div className="flex flex-col gap-4">
-            {/* TODO: PlaidLink */}
-            Link Plaid Account
+            <PlaidLink
+              user={user}
+              variant="primary"
+            />;
           </div>
         )
         : (

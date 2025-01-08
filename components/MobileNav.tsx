@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/sheet";
 
 // components
-import Footer from "./Footer";
+import Footer from "@/components/Footer";
 
 // current component ⚛️
 const MobileNav = ({ user }: MobileNavProps) => {

@@ -2,7 +2,7 @@ import React from "react";
 
 // components
 import AnimatedCounter from "@/components/AnimatedCounter";
-import DoughnutChart from "./DoughnutChart";
+import DoughnutChart from "@/components/DoughnutChart";
 
 // current component ⚛️
 const TotalBalanceBox = ({

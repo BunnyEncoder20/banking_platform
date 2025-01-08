@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 
 // components
-import Footer from "./Footer";
+import Footer from "@/components/Footer";
 
 // current component ⚛️
 const Sidebar = ({ user }: SiderbarProps) => {

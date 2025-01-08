@@ -3,12 +3,22 @@
 // appwrite client
 import { createAdminClient, createSessionClient } from "@/lib/appwrite";
 
+// Plaid
+import { plaidClient } from "@/lib/plaid";
+import {
+  CountryCode,
+  ProcessorTokenCreateRequest,
+  ProcessorTokenCreateRequestProcessorEnum,
+  Products,
+} from "plaid";
+
 // utils
 import { cookies } from "next/headers";
 import { ID } from "node-appwrite";
 
 // error handler
-import { errorHandler, parseStringify } from "@/lib/utils";
+import { encryptId, errorHandler, parseStringify } from "@/lib/utils";
+import { revalidatePath } from "next/cache";
 
 /* ----------------------- Server Actions ----------------------- */
 
@@ -92,5 +102,31 @@ export const logoutUser = async () => {
   } catch (error) {
     errorHandler("There was a error in logoutAccount", error);
     return false;
+  }
+};
+
+/* ----------------------- PLaid Server Actions ----------------------- */
+
+export const createLinkToken = async (user: User) => {
+  console.log(`Making a plaid link token for user ${user.name}...`);
+  try {
+    console.log("Constructing token params");
+    const tokenParams = {
+      user: {
+        client_user_id: user.$id,
+        client_name: user.name,
+        products: ["auth", "transactions"] as Products[],
+        language: "en",
+        conuntry_codes: ["IN"] as CountryCode[],
+      },
+    };
+
+    console.log("Creating link token...");
+    const response = await plaidClient.linkTokenCreate(tokenParams);
+
+    console.log("✅ Link token created successfully");
+    return parseStringify({ linkToken: response.data.link_token });
+  } catch (error) {
+    errorHandler("There was a error in createLinkToken", error);
   }
 };
