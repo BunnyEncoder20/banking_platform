@@ -18,6 +18,14 @@ import { cookies } from "next/headers";
 import { ID } from "node-appwrite";
 import { revalidatePath } from "next/cache";
 import { encryptId, errorHandler, parseStringify } from "@/lib/utils";
+import { unique } from "next/dist/build/utils";
+
+// env variables
+const {
+  APPWRITE_DATABASE_ID: DATABASE,
+  APPWRITE_USER_COLLECTION_ID: USER_COLLECTION,
+  APPWRITE_BANK_COLLECTION_ID: BANK_COLLECTION,
+} = process.env;
 
 /* ----------------------- Server Actions ----------------------- */
 
@@ -130,6 +138,41 @@ export const createLinkToken = async (user: User) => {
   }
 };
 
+export const createBankAccount = async ({
+  userId,
+  bankId,
+  accountId,
+  accessToken,
+  fundingSourceUrl,
+  sharableId,
+}: createBankAccountProps) => {
+  // this action just makes a bank account doucment in the banks collection of appwrite (not an actual bank account)
+  console.log("Initilizing creation of bank account...");
+  try {
+    const { database } = await createAdminClient();
+
+    console.log("Sending data to bankend...");
+    const bankAccount = await database.createDocument(
+      DATABASE!,
+      BANK_COLLECTION!,
+      ID.unique(),
+      {
+        userId,
+        bankId,
+        accountId,
+        accessToken,
+        fundingSourceUrl,
+        sharableId,
+      }
+    );
+
+    console.log("✅ Bank account created successfully");
+    return parseStringify(bankAccount);
+  } catch (error) {
+    errorHandler("There was a error in createBankAccount", error);
+  }
+};
+
 // This function exchanges a public token for an access token and item ID from plaid
 export const exchangePublicToken = async ({
   publicToken,
@@ -186,7 +229,6 @@ export const exchangePublicToken = async ({
     // Create a bank account using the user ID, item ID, account ID, access token, funding source URL, and sharable ID
     console.log("Creating bank account...");
 
-    // TODO: make createBankAccount server action
     await createBankAccount({
       userId: user.$id,
       bankId: itemId,
