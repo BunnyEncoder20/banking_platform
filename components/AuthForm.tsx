@@ -52,6 +52,18 @@ const AuthForm = ({
 
     try {
       if (type === "sign-up") {
+        const signUp_data = {
+          firstName: data.firstName!,
+          lastName: data.lastName!,
+          address1: data.address!,
+          city: data.city!,
+          state: data.state!,
+          postalCode: data.postalCode!,
+          dateOfBirth: data.dateOfBirth!,
+          aadharCardNumber: data.aadharCardNumber!,
+          email: data.email,
+          password: data.password,
+        };
         const newUser = await appwrite_signUp(data);
         setUser(newUser);
       }

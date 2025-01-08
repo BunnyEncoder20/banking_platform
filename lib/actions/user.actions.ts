@@ -11,14 +11,18 @@ import {
   ProcessorTokenCreateRequestProcessorEnum,
   Products,
 } from "plaid";
-import { addFundingSource } from "./dwolla.actions";
+import { addFundingSource, createDwollaCustomer } from "./dwolla.actions";
 
 // utils
 import { cookies } from "next/headers";
 import { ID } from "node-appwrite";
 import { revalidatePath } from "next/cache";
-import { encryptId, errorHandler, parseStringify } from "@/lib/utils";
-import { unique } from "next/dist/build/utils";
+import {
+  encryptId,
+  errorHandler,
+  extractCustomerIdFromUrl,
+  parseStringify,
+} from "@/lib/utils";
 
 // env variables
 const {
@@ -47,21 +51,58 @@ export const appwrite_signUp = async (userData: SignUpParams) => {
   const { firstName, lastName, email, password } = userData;
   console.log(`Sign UP user ${firstName} ${lastName} with email ${email}...`);
 
+  // TODO: make this entire function Atomic
+  let newUserAccount;
+
   try {
-    const { account } = await createAdminClient();
+    const { account, database } = await createAdminClient();
 
     // make new account
     console.log("Creating new account...");
-    const newUserAccount = await account.create(
+    newUserAccount = await account.create(
       ID.unique(),
       email,
       password,
       `${firstName} ${lastName}`
     );
+    if (!newUserAccount)
+      throw new Error("Error while creating appwrite user account.");
+    console.log("✅ Appwrite user account created successfully");
+
+    // make a dwolla customer
+    console.log("Creating dwolla customer...");
+    const dwollaCustomerUrl = await createDwollaCustomer({
+      ...userData,
+      type: "personal",
+    });
+    if (!dwollaCustomerUrl)
+      throw new Error("Error while creating dwolla customer.");
+    console.log("✅ Dwolla customer created successfully");
+
+    console.log("Extracting dwolla customerId...");
+    const dwollaCustomerId = extractCustomerIdFromUrl(dwollaCustomerUrl);
+    console.log("✅ Dwolla customerId extracted successfully");
+
+    // making appwrite db user document
+    console.log("Entering new user document in user collection...");
+    const newUser = await database.createDocument(
+      DATABASE!,
+      USER_COLLECTION!,
+      ID.unique(),
+      {
+        ...userData,
+        userId: newUserAccount.$id,
+        dwollaCustomerId: encryptId(dwollaCustomerId),
+        dwollaCustomerUrl,
+      }
+    );
+    if (!newUser) throw new Error("Error while entering new user document.");
+    console.log("✅ New user document entered successfully");
 
     // make new session
     console.log("Creating new session...");
     const session = await account.createEmailPasswordSession(email, password);
+    console.log("✅ Appwrite Session created successfully");
 
     // make new session cookie
     console.log("Creating new session cookie...");
@@ -71,9 +112,10 @@ export const appwrite_signUp = async (userData: SignUpParams) => {
       sameSite: "strict",
       secure: true,
     });
+    console.log("✅ Session cookie created successfully");
 
-    console.log("✅ User created successfully");
-    return parseStringify(newUserAccount);
+    console.log("✅ User created process successfull");
+    return parseStringify(newUser);
   } catch (error) {
     errorHandler("There was a error in appwrite_signIn", error);
   }
