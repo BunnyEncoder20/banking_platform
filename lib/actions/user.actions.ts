@@ -18,6 +18,7 @@ import { cookies } from "next/headers";
 import { ID } from "node-appwrite";
 import { revalidatePath } from "next/cache";
 import {
+  decryptId,
   encryptId,
   errorHandler,
   extractCustomerIdFromUrl,
@@ -118,6 +119,7 @@ export const appwrite_signUp = async ({
     console.log("✅ Session cookie created successfully");
 
     console.log("✅ User created process successfull");
+    console.log(newUser);
     return parseStringify(newUser);
   } catch (error) {
     errorHandler("There was a error in appwrite_signUp", error);
@@ -130,7 +132,7 @@ export async function getLoggedInUser() {
     const { account } = await createSessionClient();
     const user = await account.get();
 
-    console.log("✅ User data fetched successfully");
+    console.log("✅ User data fetched successfully:");
     return parseStringify(user);
   } catch (error) {
     errorHandler("There was a error in getLoggedInUser", error);
@@ -161,8 +163,7 @@ export const logoutUser = async () => {
 
 export const createLinkToken = async (user: User) => {
   console.log(
-    `Making a plaid link token for user ${user.firstName} ${user.lastName}...\n`,
-    user
+    `Making a plaid link token for user ${user.firstName} ${user.lastName}...`
   );
   try {
     console.log("Constructing token params");
@@ -175,8 +176,6 @@ export const createLinkToken = async (user: User) => {
       language: "en",
       country_codes: ["US"] as CountryCode[],
     };
-
-    console.log("[DEBUG] Token params: ", tokenParams);
 
     console.log("Creating link token...");
     const response = await plaidClient.linkTokenCreate(tokenParams);
@@ -201,7 +200,8 @@ export const createBankAccount = async ({
   try {
     const { database } = await createAdminClient();
 
-    console.log("Sending data to bankend...");
+    console.log("Sending bank data to bankend...");
+    console.log("[DEBUG] Bank ID: ", bankId);
     const bankAccount = await database.createDocument(
       DATABASE!,
       BANK_COLLECTION!,
@@ -265,9 +265,8 @@ export const exchangePublicToken = async ({
     console.log("✅ Dwolla Processor token created successfully");
 
     // Create a funding source URL for the account using the Dwolla customer ID, processor token, and bank name
-    console.log("Creating funding source URL...");
     const fundingSourceUrl = await addFundingSource({
-      dwollaCustomerId: user.dwollaCustomerId,
+      dwollaCustomerId: decryptId(user.dwollaCustomerId),
       processorToken,
       bankName: accountData.name,
     });

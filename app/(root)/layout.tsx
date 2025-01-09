@@ -21,7 +21,7 @@ const rootLayout = async ({
     console.log("❌ user not authenticated, redirecting...");
     redirect("/sign-in");
   }
-  console.log("Fetched LoggedIn User:\n", loggedInUser);
+  console.log("Fetched LoggedIn User");
 
   return (
     <main className="flex h-screen w-full font-inter">

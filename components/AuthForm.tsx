@@ -171,7 +171,7 @@ const AuthForm = ({
                   />
 
                   <div className="flex gap-4">
-                    {/* TODO: try to make this into a dropdown menu: shadcn select */}
+                    {/* TODO: try to make this into a dropdown menu for US states: shadcn select */}
                     {/* State */}
                     <CustomFormField
                       control={form.control}
