@@ -302,3 +302,8 @@ export const exchangePublicToken = async ({
     errorHandler("An error occurred while creating exchanging token:", error);
   }
 };
+
+/* ----------------------- Bank Server Actions ----------------------- */
+
+export const getBank = async ({}: getBankProps) => {};
+export const getBanks = async ({ userId }: getBanksProps) => {};
