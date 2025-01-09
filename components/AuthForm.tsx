@@ -45,7 +45,7 @@ const AuthForm = ({
   });
 
   // handlers 🤙
-  console.log(`Type: ${type} | User: ${user}`);
+  // console.log(`Type: ${type} | User: ${user}`);
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     console.log("Submitting form...");
     setIsLoading(true);
@@ -55,12 +55,12 @@ const AuthForm = ({
         const signUp_data = {
           firstName: data.firstName!,
           lastName: data.lastName!,
-          address: data.address!,
+          address1: data.address1!,
           city: data.city!,
           state: data.state!,
           postalCode: data.postalCode!,
           dateOfBirth: data.dateOfBirth!,
-          aadharCardNumber: data.aadharCardNumber!,
+          ssn: data.ssn!,
           email: data.email,
           password: data.password,
         };
@@ -128,7 +128,7 @@ const AuthForm = ({
             <PlaidLink
               user={user}
               variant="primary"
-            />;
+            />
           </div>
         )
         : (
@@ -157,7 +157,7 @@ const AuthForm = ({
                   {/* address */}
                   <CustomFormField
                     control={form.control}
-                    name="address"
+                    name="address1"
                     label="Address"
                     placeholder="Enter permanent address"
                   />
@@ -201,9 +201,9 @@ const AuthForm = ({
                     {/* aadhar number */}
                     <CustomFormField
                       control={form.control}
-                      name="aadharCardNumber"
-                      label="Aadhar Card Number"
-                      placeholder="eg: 1234 5678 9012"
+                      name="ssn"
+                      label="SSN"
+                      placeholder="*** *** ***"
                     />
                   </div>
                 </>

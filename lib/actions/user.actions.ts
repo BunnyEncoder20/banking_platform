@@ -46,9 +46,12 @@ export const appwrite_signIn = async ({ email, password }: signInProps) => {
   }
 };
 
-export const appwrite_signUp = async (userData: SignUpParams) => {
+export const appwrite_signUp = async ({
+  password, // we don't want to send the password to the db, hence extract it here, removing it from the userData object
+  ...userData
+}: SignUpParams) => {
   // destructure
-  const { firstName, lastName, email, password } = userData;
+  const { firstName, lastName, email } = userData;
   console.log(`Sign UP user ${firstName} ${lastName} with email ${email}...`);
 
   // TODO: make this entire function Atomic
@@ -117,7 +120,7 @@ export const appwrite_signUp = async (userData: SignUpParams) => {
     console.log("✅ User created process successfull");
     return parseStringify(newUser);
   } catch (error) {
-    errorHandler("There was a error in appwrite_signIn", error);
+    errorHandler("There was a error in appwrite_signUp", error);
   }
 };
 
@@ -157,18 +160,23 @@ export const logoutUser = async () => {
 /* ----------------------- PLaid Server Actions ----------------------- */
 
 export const createLinkToken = async (user: User) => {
-  console.log(`Making a plaid link token for user ${user.name}...`);
+  console.log(
+    `Making a plaid link token for user ${user.firstName} ${user.lastName}...\n`,
+    user
+  );
   try {
     console.log("Constructing token params");
     const tokenParams = {
       user: {
         client_user_id: user.$id,
       },
-      client_name: user.name,
+      client_name: `${user.firstName} ${user.lastName}`,
       products: ["auth"] as Products[],
       language: "en",
       country_codes: ["US"] as CountryCode[],
     };
+
+    console.log("[DEBUG] Token params: ", tokenParams);
 
     console.log("Creating link token...");
     const response = await plaidClient.linkTokenCreate(tokenParams);

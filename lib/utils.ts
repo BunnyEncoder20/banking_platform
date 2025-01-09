@@ -196,23 +196,27 @@ export const getTransactionStatus = (date: Date) => {
   return date > twoDaysAgo ? "Processing" : "Success";
 };
 
+// Auth form schema for shad-react-hook-forms
 export const authFormSchema = (type: string) =>
   z.object({
     // sign up only
     firstName: type === "sign-in" ? z.string().optional() : z.string().min(3),
     lastName: type === "sign-in" ? z.string().optional() : z.string().min(3),
-    address: type === "sign-in" ? z.string().optional() : z.string().max(50),
+    address1: type === "sign-in" ? z.string().optional() : z.string().max(50),
     city: type === "sign-in" ? z.string().optional() : z.string().max(50),
-    state: type === "sign-in" ? z.string().optional() : z.string().min(2),
+    state:
+      type === "sign-in"
+        ? z.string().optional()
+        : z
+            .string()
+            .length(2, "State must be 2 characters abbreviation for Dwolla"),
     postalCode:
-      type === "sign-in"
-        ? z.string().optional()
-        : z.string().length(6, "Postal code must be 6 digits long"),
+      type === "sign-in" ? z.string().optional() : z.string().min(3).max(5),
     dateOfBirth: type === "sign-in" ? z.string().optional() : z.string().min(3),
-    aadharCardNumber:
+    ssn:
       type === "sign-in"
         ? z.string().optional()
-        : z.string().length(12, "Aadhar number must be 12 digits long"),
+        : z.string().length(9, "SSN must be 9 digits long"),
 
     // in both forms
     email: z.string().email(),
