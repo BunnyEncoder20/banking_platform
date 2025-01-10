@@ -15,7 +15,7 @@ import { addFundingSource, createDwollaCustomer } from "./dwolla.actions";
 
 // utils
 import { cookies } from "next/headers";
-import { ID } from "node-appwrite";
+import { ID, Query } from "node-appwrite";
 import { revalidatePath } from "next/cache";
 import {
   decryptId,
@@ -34,16 +34,41 @@ const {
 
 /* ----------------------- Server Actions ----------------------- */
 
+export const getUserInfo = async ({ userId }: getUserInfoProps) => {
+  console.log(`Getting user info for ${userId}...`);
+  try {
+    const { database } = await createAdminClient();
+
+    console.log(`Querying user collection...`);
+    const user = await database.listDocuments(DATABASE!, USER_COLLECTION!, [
+      Query.equal("userId", [userId]),
+    ]);
+
+    console.log("✅ User info fetched successfully");
+    return parseStringify(user.documents[0]);
+  } catch (error) {
+    errorHandler("There was a error in getUserInfo", error);
+  }
+};
+
 export const appwrite_signIn = async ({ email, password }: signInProps) => {
   console.log(`Signing IN user with email: ${email}...`);
   try {
     const { account } = await createAdminClient();
-    const response = await account.createEmailPasswordSession(email, password);
+    const session = await account.createEmailPasswordSession(email, password);
 
-    console.log("✅ User signed in successfully");
-    return parseStringify(response);
+    (await cookies()).set("appwrite-session", session.secret, {
+      path: "/",
+      httpOnly: true,
+      sameSite: "strict",
+      secure: true,
+    });
+
+    const user = await getUserInfo({ userId: session.userId });
+
+    return parseStringify(user);
   } catch (error) {
-    errorHandler("There was a error in appwrite_signIn", error);
+    console.error("Error", error);
   }
 };
 
@@ -129,8 +154,13 @@ export const appwrite_signUp = async ({
 export async function getLoggedInUser() {
   console.log("Getting logged in user...");
   try {
+    console.log(`checking for session cookie...`);
     const { account } = await createSessionClient();
-    const user = await account.get();
+    const result = await account.get();
+
+    console.log(`✅ session data fetched successfully`);
+    console.log(`Fetching user data...`);
+    const user = await getUserInfo({ userId: result.$id });
 
     console.log("✅ User data fetched successfully:");
     return parseStringify(user);
@@ -201,7 +231,7 @@ export const createBankAccount = async ({
     const { database } = await createAdminClient();
 
     console.log("Sending bank data to bankend...");
-    console.log("[DEBUG] Bank ID: ", bankId);
+    console.log("[DEBUG] for userID: ", userId);
     const bankAccount = await database.createDocument(
       DATABASE!,
       BANK_COLLECTION!,
@@ -277,7 +307,6 @@ export const exchangePublicToken = async ({
 
     // Create a bank account using the user ID, item ID, account ID, access token, funding source URL, and sharable ID
     console.log("Creating bank account...");
-
     await createBankAccount({
       userId: user.$id,
       bankId: itemId,
@@ -305,5 +334,40 @@ export const exchangePublicToken = async ({
 
 /* ----------------------- Bank Server Actions ----------------------- */
 
-export const getBank = async ({}: getBankProps) => {};
-export const getBanks = async ({ userId }: getBanksProps) => {};
+export const getBank = async ({ documentId }: getBankProps) => {
+  console.log(`Getting bank document with id: ${documentId}...`);
+  try {
+    console.log("Creating admin client...");
+    const { database } = await createAdminClient();
+
+    console.log(`Fetching bank document with id: ${documentId}...`);
+    const bank = await database.listDocuments(DATABASE!, BANK_COLLECTION!, [
+      Query.equal("$id", [documentId]),
+    ]);
+
+    console.log("✅ Bank document fetched successfully");
+    console.log(bank.documents[0]); // coming correctly✅
+    return parseStringify(bank.documents[0]);
+  } catch (error) {
+    errorHandler("There was a error in getBank", error);
+  }
+};
+
+export const getBanks = async ({ userDocumentId }: getBanksProps) => {
+  console.log(`Getting banks for userId: ${userDocumentId}...`);
+  try {
+    console.log("Creating admin client...");
+    const { database } = await createAdminClient();
+
+    console.log("Fetching banks...");
+    const banks = await database.listDocuments(DATABASE!, BANK_COLLECTION!, [
+      Query.equal("userId", [userDocumentId]),
+    ]);
+
+    console.log("✅ Banks fetched successfully");
+    console.log(banks.documents);
+    return parseStringify(banks.documents);
+  } catch (error) {
+    errorHandler("There was a error in getBanks", error);
+  }
+};

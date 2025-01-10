@@ -16,11 +16,17 @@ import { parseStringify } from "../utils";
 import { getBanks, getBank } from "./user.actions";
 
 // Get multiple bank accounts
-export const getAccounts = async ({ userId }: getAccountsProps) => {
+export const getAccounts = async ({ userDocumentId }: getAccountsProps) => {
+  console.log(
+    `Getting all bank accounts for userDocumentId: ${userDocumentId}...`
+  );
   try {
     // get banks from db
-    const banks = await getBanks({ userId });
+    console.log("Fetching banks...");
+    const banks = await getBanks({ userDocumentId });
+    console.log("✅ Banks fetched successfully");
 
+    console.log("Extracting data...");
     const accounts = await Promise.all(
       banks?.map(async (bank: Bank) => {
         // get each account info from plaid
@@ -45,18 +51,27 @@ export const getAccounts = async ({ userId }: getAccountsProps) => {
           type: accountData.type as string,
           subtype: accountData.subtype! as string,
           appwriteItemId: bank.$id,
-          sharaebleId: bank.shareableId,
+          sharableId: bank.sharableId,
         };
 
         return account;
       })
     );
 
+    console.log("✅ All accounts fetched successfully");
     const totalBanks = accounts.length;
-    const totalCurrentBalance = accounts.reduce((total, account) => {
-      return total + account.currentBalance;
-    }, 0);
+    const totalCurrentBalance = accounts.reduce(
+      (total: number, account: Account) => {
+        return total + account.currentBalance;
+      },
+      0
+    );
 
+    console.log("✅ Total banks and current balanace calculated successfully", {
+      data: accounts,
+      totalBanks,
+      totalCurrentBalance,
+    });
     return parseStringify({ data: accounts, totalBanks, totalCurrentBalance });
   } catch (error) {
     console.error("An error occurred while getting the accounts:", error);
@@ -76,30 +91,30 @@ export const getAccount = async ({ appwriteItemId }: getAccountProps) => {
     const accountData = accountsResponse.data.accounts[0];
 
     // get transfer transactions from appwrite
-    const transferTransactionsData = await getTransactionsByBankId({
-      bankId: bank.$id,
-    });
+    // const transferTransactionsData = await getTransactionsByBankId({
+    //   bankId: bank.$id,
+    // });
 
-    const transferTransactions = transferTransactionsData.documents.map(
-      (transferData: Transaction) => ({
-        id: transferData.$id,
-        name: transferData.name!,
-        amount: transferData.amount!,
-        date: transferData.$createdAt,
-        paymentChannel: transferData.channel,
-        category: transferData.category,
-        type: transferData.senderBankId === bank.$id ? "debit" : "credit",
-      })
-    );
+    // const transferTransactions = transferTransactionsData.documents.map(
+    //   (transferData: Transaction) => ({
+    //     id: transferData.$id,
+    //     name: transferData.name!,
+    //     amount: transferData.amount!,
+    //     date: transferData.$createdAt,
+    //     paymentChannel: transferData.channel,
+    //     category: transferData.category,
+    //     type: transferData.senderBankId === bank.$id ? "debit" : "credit",
+    //   })
+    // );
 
     // get institution info from plaid
     const institution = await getInstitution({
       institutionId: accountsResponse.data.item.institution_id!,
     });
 
-    const transactions = await getTransactions({
-      accessToken: bank?.accessToken,
-    });
+    // const transactions = await getTransactions({
+    //   accessToken: bank?.accessToken,
+    // });
 
     const account = {
       id: accountData.account_id,
@@ -115,13 +130,14 @@ export const getAccount = async ({ appwriteItemId }: getAccountProps) => {
     };
 
     // sort transactions by date such that the most recent transaction is first
-    const allTransactions = [...transactions, ...transferTransactions].sort(
-      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-    );
+    // const allTransactions = [...transactions, ...transferTransactions].sort(
+    //   (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    // );
 
     return parseStringify({
       data: account,
-      transactions: allTransactions,
+      // TODO: send actual data after adding GetTransactions Server action
+      transactions: [],
     });
   } catch (error) {
     console.error("An error occurred while getting the account:", error);

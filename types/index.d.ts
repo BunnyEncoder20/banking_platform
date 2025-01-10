@@ -259,7 +259,7 @@ declare interface PaymentTransferFormProps {
 
 // Actions
 declare interface getAccountsProps {
-  userId: string;
+  userDocumentId: string;
 }
 
 declare interface getAccountProps {
@@ -319,7 +319,7 @@ declare interface createBankAccountProps {
 }
 
 declare interface getBanksProps {
-  userId: string;
+  userDocumentId: string;
 }
 
 declare interface getBankProps {
