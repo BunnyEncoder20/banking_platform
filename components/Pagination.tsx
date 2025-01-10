@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { formUrlQuery } from "@/lib/utils";
 
-export const Pagination = ({ page, totalPages }: PaginationProps) => {
+const Pagination = ({ page, totalPages }: PaginationProps) => {
   const router = useRouter();
   const searchParams = useSearchParams()!;
 
@@ -62,3 +62,5 @@ export const Pagination = ({ page, totalPages }: PaginationProps) => {
     </div>
   );
 };
+
+export default Pagination;
