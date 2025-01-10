@@ -15,6 +15,7 @@ export const BankTabItem = ({ account, appwriteItemId }: BankTabItemProps) => {
       key: "id",
       value: account?.appwriteItemId,
     });
+    console.log("[DEBUG]", newUrl);
     router.push(newUrl, { scroll: false });
   };
 

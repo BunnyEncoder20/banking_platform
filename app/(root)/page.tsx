@@ -26,7 +26,7 @@ const HomePage = async ({ searchParams: { id, page } }: SearchParamProps) => {
 
   // fetch singular account details
   const accountsData = accounts?.data;
-  const appwriteItemId = accountsData[0]?.appwriteItemId || (id as string);
+  const appwriteItemId = (id as string) || accountsData[0]?.appwriteItemId;
   const account = await getAccount({ appwriteItemId });
 
   return (
