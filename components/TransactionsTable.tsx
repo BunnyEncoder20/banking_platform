@@ -13,11 +13,34 @@ import {
 
 // utils
 import {
+  cn,
   formatAmount,
   formatDateTime,
   getTransactionStatus,
   removeSpecialCharacters,
 } from "@/lib/utils";
+
+// constants
+import { transactionCategoryStyles } from "@/constants";
+
+// categoryBadge helper component
+const CategoryBadge = ({ category }: CategoryBadgeProps) => {
+  const {
+    borderColor,
+    backgroundColor,
+    textColor,
+    chipBackgroundColor,
+  } = transactionCategoryStyles[
+    category as keyof typeof transactionCategoryStyles
+  ] || transactionCategoryStyles.default;
+
+  return (
+    <div className={cn("category-badge", borderColor, chipBackgroundColor)}>
+      <div className={cn("size-2 rounded-full", backgroundColor)} />
+      <p className={cn("text-[12px] font-medium", textColor)}>{category}</p>
+    </div>
+  );
+};
 
 // current component ⚛️
 const TransactionsTable = ({
@@ -73,7 +96,7 @@ const TransactionsTable = ({
 
               {/* status */}
               <TableCell className="pl-2 pr-10">
-                {status}
+                <CategoryBadge category={status} />
               </TableCell>
 
               {/* date */}
@@ -88,7 +111,7 @@ const TransactionsTable = ({
 
               {/* category */}
               <TableCell className="pl-2 pr-10 max-md:hidden">
-                {t.category}
+                <CategoryBadge category={t.category} />
               </TableCell>
             </TableRow>
           );
