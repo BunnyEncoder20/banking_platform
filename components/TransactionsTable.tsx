@@ -39,41 +39,55 @@ const TransactionsTable = ({
         {transactions.map((t: Transaction) => {
           const status = getTransactionStatus(new Date(t.date));
           const amount = formatAmount(t.amount);
-          const isDebit = t.type === "debit";
+          const isDebit = t.type === "debit" || amount[0] === "-";
+          const isCredit = amount[0] !== "-";
+
           return (
-            <TableRow key={t.id}>
+            <TableRow
+              key={t.id}
+              className={`${
+                isDebit || amount[0] === "-"
+                  ? "bg-[#fffbfa]"
+                  : "bg-[#f6fef9] !over:bg-none !border-b-DEFAULT"
+              }`}
+            >
               {/* Name */}
-              <TableCell>
-                <div>
-                  <h1>
+              <TableCell className="max-w-[250px] pl-2 pr-10">
+                <div className="flex items-center gap-3">
+                  <h1 className="text-14 truncate font-semibold text-[#344054]">
                     {removeSpecialCharacters(t.name)}
                   </h1>
                 </div>
               </TableCell>
 
               {/* Debit */}
-              <TableCell>
-                {isDebit}
-                {isDebit ? `-${amount}` : `${amount}`}
+              <TableCell
+                className={`pl-2 pr-10 font-semibold ${
+                  isDebit || amount[0] === "-"
+                    ? "text-[#f04438]"
+                    : "text-[#039855]"
+                }`}
+              >
+                {isCredit ? `+${amount}` : amount}
               </TableCell>
 
               {/* status */}
-              <TableCell>
+              <TableCell className="pl-2 pr-10">
                 {status}
               </TableCell>
 
               {/* date */}
-              <TableCell>
+              <TableCell className="min-w-32 pl-2 pr-10">
                 {formatDateTime(new Date(t.date)).dateTime}
               </TableCell>
 
               {/* channel */}
-              <TableCell>
+              <TableCell className="pl-2 pr-10 capitalize min-w-24">
                 {t.paymentChannel}
               </TableCell>
 
               {/* category */}
-              <TableCell>
+              <TableCell className="pl-2 pr-10 max-md:hidden">
                 {t.category}
               </TableCell>
             </TableRow>
