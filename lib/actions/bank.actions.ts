@@ -12,8 +12,8 @@ import {
 import { plaidClient } from "../plaid";
 import { parseStringify } from "../utils";
 
-// import { getTransactionsByBankId } from "./transaction.actions";
 import { getBanks, getBank } from "./user.actions";
+import { getTransactionsByBankId } from "./transaction.actions";
 
 // Get multiple bank accounts
 export const getAccounts = async ({ userDocumentId }: getAccountsProps) => {
@@ -80,21 +80,37 @@ export const getAccounts = async ({ userDocumentId }: getAccountsProps) => {
 
 // Get one bank account
 export const getAccount = async ({ appwriteItemId }: getAccountProps) => {
+  console.log(`Getting account with documentId: ${appwriteItemId}...`);
   try {
     // get bank from db
+    console.log("Fetching bank...");
     const bank = await getBank({ documentId: appwriteItemId });
+    if (bank) console.log("✅ Bank fetched successfully");
 
     // get account info from plaid
+    console.log(
+      `Fetching account from plaid for accessToken ${bank.accessToken}...`
+    );
     const accountsResponse = await plaidClient.accountsGet({
       access_token: bank.accessToken,
     });
     const accountData = accountsResponse.data.accounts[0];
+    if (accountData)
+      console.log("✅ Plaid account fetched successfully", accountData);
 
     // get transfer transactions from appwrite
+    // console.log(
+    //   `Fetching transfer transactions data for bankId: ${bank.$id}...`
+    // );
     // const transferTransactionsData = await getTransactionsByBankId({
     //   bankId: bank.$id,
     // });
+    // if (transferTransactionsData)
+    //   console.log(
+    //     `✅ Transfer transactions data fetched successfully: ${transferTransactionsData}`
+    //   );
 
+    // console.log(`Extracting transfer transactions from data...`);
     // const transferTransactions = transferTransactionsData.documents.map(
     //   (transferData: Transaction) => ({
     //     id: transferData.$id,
@@ -106,15 +122,26 @@ export const getAccount = async ({ appwriteItemId }: getAccountProps) => {
     //     type: transferData.senderBankId === bank.$id ? "debit" : "credit",
     //   })
     // );
+    // if (transferTransactions)
+    //   console.log(
+    //     "✅ Transfer transactions extracted successfully",
+    //     transferTransactions
+    //   );
 
     // get institution info from plaid
+    console.log("Fetching Institute info from plaid...");
     const institution = await getInstitution({
       institutionId: accountsResponse.data.item.institution_id!,
     });
+    if (institution) console.log("✅ Institution fetched successfully");
 
-    // const transactions = await getTransactions({
-    //   accessToken: bank?.accessToken,
-    // });
+    // get transactions
+    console.log("Fetching transactions...");
+    const transactions = await getTransactions({
+      accessToken: bank?.accessToken,
+    });
+    if (transactions)
+      console.log("✅ Transactions fetched successfully:", transactions);
 
     const account = {
       id: accountData.account_id,
@@ -130,14 +157,16 @@ export const getAccount = async ({ appwriteItemId }: getAccountProps) => {
     };
 
     // sort transactions by date such that the most recent transaction is first
-    // const allTransactions = [...transactions, ...transferTransactions].sort(
-    //   (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-    // );
+    console.log("Sorting transactions...");
+    const allTransactions = [
+      ...transactions,
+      // ...transferTransactions
+    ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
+    console.log("✅ All getAccount completed successfully");
     return parseStringify({
       data: account,
-      // TODO: send actual data after adding GetTransactions Server action
-      transactions: [],
+      transactions: allTransactions,
     });
   } catch (error) {
     console.error("An error occurred while getting the account:", error);
@@ -169,6 +198,7 @@ export const getTransactions = async ({
   let hasMore = true;
   let transactions: any = [];
 
+  console.log(`Fetching transactions for accessToken: ${accessToken}...`);
   try {
     // Iterate through each page of new transaction updates for item
     while (hasMore) {
@@ -194,8 +224,13 @@ export const getTransactions = async ({
       hasMore = data.has_more;
     }
 
+    if (transactions)
+      console.log("✅ Transactions fetched successfully", transactions);
     return parseStringify(transactions);
   } catch (error) {
-    console.error("An error occurred while getting the accounts:", error);
+    console.error(
+      "An error occurred while getting the accounts:",
+      error.response?.data
+    );
   }
 };

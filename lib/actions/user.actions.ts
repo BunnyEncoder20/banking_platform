@@ -192,25 +192,21 @@ export const logoutUser = async () => {
 /* ----------------------- PLaid Server Actions ----------------------- */
 
 export const createLinkToken = async (user: User) => {
-  console.log(
-    `Making a plaid link token for user ${user.firstName} ${user.lastName}...`
-  );
+  console.log(`Making a plaid link token for user ${user.$id}...`);
   try {
-    console.log("Constructing token params");
     const tokenParams = {
       user: {
         client_user_id: user.$id,
       },
       client_name: `${user.firstName} ${user.lastName}`,
-      products: ["auth"] as Products[],
+      products: ["auth", "transactions"] as Products[],
       language: "en",
       country_codes: ["US"] as CountryCode[],
     };
 
-    console.log("Creating link token...");
     const response = await plaidClient.linkTokenCreate(tokenParams);
+    console.log("✅ Link token request successfully:", response.data);
 
-    console.log("✅ Link token created successfully");
     return parseStringify({ linkToken: response.data.link_token });
   } catch (error) {
     errorHandler("There was a error in createLinkToken", error);
