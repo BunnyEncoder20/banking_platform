@@ -67,9 +67,9 @@ export const formatDateTime = (dateString: Date) => {
 };
 
 export function formatAmount(amount: number): string {
-  const formatter = new Intl.NumberFormat("en-US", {
+  const formatter = new Intl.NumberFormat("en-IN", {
     style: "currency",
-    currency: "USD",
+    currency: "INR",
     minimumFractionDigits: 2,
   });
 
@@ -189,6 +189,7 @@ export function decryptId(id: string) {
 }
 
 export const getTransactionStatus = (date: Date) => {
+  // 2 days cause that's how long it takes for Dwolla to process a transaction in sandbox mode
   const today = new Date();
   const twoDaysAgo = new Date(today);
   twoDaysAgo.setDate(today.getDate() - 2);

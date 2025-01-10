@@ -62,9 +62,6 @@ const Sidebar = ({ user }: SiderbarProps) => {
             </Link>
           );
         })}
-
-        {/* TODO: user */}
-        User
       </nav>
 
       {/* TODO: Footer */}
