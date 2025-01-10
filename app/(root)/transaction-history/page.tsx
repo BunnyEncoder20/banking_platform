@@ -15,24 +15,28 @@ import TransactionsTable from "@/components/TransactionsTable";
 const transactionHistoryPage = async (
   { searchParams: { id, page } }: SearchParamProps,
 ) => {
-  // states and hooks
   const currentPage = Number(page as string) || 1;
-
-  // fetch logged in user
-  const loggedInUser = await getLoggedInUser();
-
-  // fetch accounts
-  console.log(`[DEBUG] LoggedInUser: `, loggedInUser);
+  const loggedIn = await getLoggedInUser();
   const accounts = await getAccounts({
-    userDocumentId: loggedInUser.$id,
+    userDocumentId: loggedIn.$id,
   });
+
   if (!accounts) return;
 
-  // fetch singular account details
   const accountsData = accounts?.data;
-  const appwriteItemId = accountsData[0]?.appwriteItemId || (id as string);
-  console.log("AppwriteItemId: ", appwriteItemId);
+  const appwriteItemId = (id as string) || accountsData[0]?.appwriteItemId;
+
   const account = await getAccount({ appwriteItemId });
+
+  // const rowsPerPage = 10;
+  // const totalPages = Math.ceil(account?.transactions.length / rowsPerPage);
+
+  // const indexOfLastTransaction = currentPage * rowsPerPage;
+  // const indexOfFirstTransaction = indexOfLastTransaction - rowsPerPage;
+
+  // const currentTransactions = account?.transactions.slice(
+  //   indexOfFirstTransaction, indexOfLastTransaction
+  // )
 
   return (
     <div className="transactions">

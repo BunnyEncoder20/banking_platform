@@ -24,7 +24,7 @@ const RecentTransactions = ({
           href={`/transaction-history/?id=${appwriteItemId}`}
           className="view-all-btn"
         >
-          View all
+          View all transactions
         </Link>
       </header>
 
