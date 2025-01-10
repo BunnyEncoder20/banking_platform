@@ -1,13 +1,6 @@
 "use server";
 
-import {
-  ACHClass,
-  CountryCode,
-  TransferAuthorizationCreateRequest,
-  TransferCreateRequest,
-  TransferNetwork,
-  TransferType,
-} from "plaid";
+import { CountryCode } from "plaid";
 
 import { plaidClient } from "../plaid";
 import { parseStringify } from "../utils";
@@ -92,34 +85,29 @@ export const getAccount = async ({ appwriteItemId }: getAccountProps) => {
     if (accountData) console.log("✅ Plaid account fetched successfully");
 
     // get transfer transactions from appwrite
-    // console.log(
-    //   `Fetching transfer transactions data for bankId: ${bank.$id}...`
-    // );
-    // const transferTransactionsData = await getTransactionsByBankId({
-    //   bankId: bank.$id,
-    // });
-    // if (transferTransactionsData)
-    //   console.log(
-    //     `✅ Transfer transactions data fetched successfully: ${transferTransactionsData}`
-    //   );
+    console.log(
+      `Fetching transfer transactions data for bankId: ${bank.$id}...`
+    );
+    const transferTransactionsData = await getTransactionsByBankId({
+      bankId: bank.$id,
+    });
+    if (transferTransactionsData)
+      console.log(`✅ Transfer transactions data fetched successfully`);
 
-    // console.log(`Extracting transfer transactions from data...`);
-    // const transferTransactions = transferTransactionsData.documents.map(
-    //   (transferData: Transaction) => ({
-    //     id: transferData.$id,
-    //     name: transferData.name!,
-    //     amount: transferData.amount!,
-    //     date: transferData.$createdAt,
-    //     paymentChannel: transferData.channel,
-    //     category: transferData.category,
-    //     type: transferData.senderBankId === bank.$id ? "debit" : "credit",
-    //   })
-    // );
-    // if (transferTransactions)
-    //   console.log(
-    //     "✅ Transfer transactions extracted successfully",
-    //     transferTransactions
-    //   );
+    console.log(`Extracting transfer transactions from data...`);
+    const transferTransactions = transferTransactionsData.documents.map(
+      (transferData: Transaction) => ({
+        id: transferData.$id,
+        name: transferData.name!,
+        amount: transferData.amount!,
+        date: transferData.$createdAt,
+        paymentChannel: transferData.channel,
+        category: transferData.category,
+        type: transferData.senderBankId === bank.$id ? "debit" : "credit",
+      })
+    );
+    if (transferTransactions)
+      console.log("✅ Transfer transactions extracted successfully");
 
     // get institution info from plaid
     console.log("Fetching Institute info from plaid...");
@@ -150,10 +138,9 @@ export const getAccount = async ({ appwriteItemId }: getAccountProps) => {
 
     // sort transactions by date such that the most recent transaction is first
     console.log("Sorting transactions...");
-    const allTransactions = [
-      ...transactions,
-      // ...transferTransactions
-    ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    const allTransactions = [...transactions, ...transferTransactions].sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    );
 
     console.log("✅ All getAccount completed successfully");
     return parseStringify({
