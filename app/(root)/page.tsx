@@ -4,11 +4,18 @@ import React from "react";
 import HeaderBox from "@/components/HeaderBox";
 import TotalBalanceBox from "@/components/TotalBalanceBox";
 import RightSidebar from "@/components/RightSidebar";
+import RecentTransactions from "@/components/RecentTransactions";
+
+// server actions
 import { getLoggedInUser } from "@/lib/actions/user.actions";
 import { getAccount, getAccounts } from "@/lib/actions/bank.actions";
 
 // current page 📄
 const HomePage = async ({ searchParams: { id, page } }: SearchParamProps) => {
+  // states and hooks
+  const currentPage = Number(page as string) || 1;
+
+  // fetch logged in user
   const loggedInUser = await getLoggedInUser();
 
   // fetch accounts
@@ -45,8 +52,12 @@ const HomePage = async ({ searchParams: { id, page } }: SearchParamProps) => {
           />
         </header>
 
-        {/* TODO: recent transactions */}
-        Recent transactions
+        <RecentTransactions
+          accounts={accountsData}
+          transactions={account?.transactions}
+          appwriteItemId={appwriteItemId}
+          page={currentPage}
+        />
       </div>
 
       <RightSidebar

@@ -140,8 +140,7 @@ export const getAccount = async ({ appwriteItemId }: getAccountProps) => {
     const transactions = await getTransactions({
       accessToken: bank?.accessToken,
     });
-    if (transactions)
-      console.log("✅ Transactions fetched successfully:", transactions);
+    if (transactions) console.log("✅ Transactions fetched successfully");
 
     const account = {
       id: accountData.account_id,
@@ -224,8 +223,7 @@ export const getTransactions = async ({
       hasMore = data.has_more;
     }
 
-    if (transactions)
-      console.log("✅ Transactions fetched successfully", transactions);
+    if (transactions) console.log("✅ Transactions data compiled successfully");
     return parseStringify(transactions);
   } catch (error) {
     console.error(
