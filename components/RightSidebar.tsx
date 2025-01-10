@@ -4,6 +4,10 @@ import Link from "next/link";
 
 // components
 import BankCard from "@/components/BankCard";
+import Category from "@/components/Category";
+
+// utils
+import { countTransactionCategories } from "@/lib/utils";
 
 // current component ⚛️
 const RightSidebar = ({
@@ -11,13 +15,15 @@ const RightSidebar = ({
   transactions,
   banks,
 }: RightSidebarProps) => {
+  // budgetCategoryies
+  const categories: CategoryCount[] = countTransactionCategories(transactions);
+  console.log(categories);
   return (
     <aside className="right-sidebar">
       {/* profile section */}
       <section className="flex flex-col pb-8">
         <div className="profile-banner" />
         <div className="profile">
-          {/* TODO: profile letter / pic */}
           <div className="profile-img">
             <span className="text-5xl font-bold text-blue-500">
               {user.firstName[0]}
@@ -78,6 +84,16 @@ const RightSidebar = ({
             )}
           </div>
         )}
+
+        {/* cateogry budgets */}
+        <div className="mt-10 flex flex-1 flex-col gap-6">
+          <h2 className="header-2">Top Category</h2>
+          <div className="space-y-5">
+            {categories.map((category, index) => (
+              <Category key={index} category={category} />
+            ))}
+          </div>
+        </div>
       </section>
     </aside>
   );
