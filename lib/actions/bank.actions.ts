@@ -67,11 +67,7 @@ export const getAccounts = async ({ userDocumentId }: getAccountsProps) => {
       0
     );
 
-    console.log("✅ Total banks and current balanace calculated successfully", {
-      data: accounts,
-      totalBanks,
-      totalCurrentBalance,
-    });
+    console.log("✅ Total banks and current balanace calculated successfully");
     return parseStringify({ data: accounts, totalBanks, totalCurrentBalance });
   } catch (error) {
     console.error("An error occurred while getting the accounts:", error);
@@ -88,15 +84,12 @@ export const getAccount = async ({ appwriteItemId }: getAccountProps) => {
     if (bank) console.log("✅ Bank fetched successfully");
 
     // get account info from plaid
-    console.log(
-      `Fetching account from plaid for accessToken ${bank.accessToken}...`
-    );
+    console.log(`Fetching account from plaid...`);
     const accountsResponse = await plaidClient.accountsGet({
       access_token: bank.accessToken,
     });
     const accountData = accountsResponse.data.accounts[0];
-    if (accountData)
-      console.log("✅ Plaid account fetched successfully", accountData);
+    if (accountData) console.log("✅ Plaid account fetched successfully");
 
     // get transfer transactions from appwrite
     // console.log(
@@ -197,7 +190,7 @@ export const getTransactions = async ({
   let hasMore = true;
   let transactions: any = [];
 
-  console.log(`Fetching transactions for accessToken: ${accessToken}...`);
+  console.log(`Fetching transactions...‸`);
   try {
     // Iterate through each page of new transaction updates for item
     while (hasMore) {

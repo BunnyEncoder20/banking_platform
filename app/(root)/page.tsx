@@ -19,7 +19,6 @@ const HomePage = async ({ searchParams: { id, page } }: SearchParamProps) => {
   const loggedInUser = await getLoggedInUser();
 
   // fetch accounts
-  console.log(`[DEBUG] LoggedInUser: `, loggedInUser);
   const accounts = await getAccounts({
     userDocumentId: loggedInUser.$id,
   });
@@ -28,11 +27,7 @@ const HomePage = async ({ searchParams: { id, page } }: SearchParamProps) => {
   // fetch singular account details
   const accountsData = accounts?.data;
   const appwriteItemId = accountsData[0]?.appwriteItemId || (id as string);
-  console.log("AppwriteItemId: ", appwriteItemId);
   const account = await getAccount({ appwriteItemId });
-
-  console.log("Accounts data: ", accountsData);
-  console.log("Singular account data: ", account);
 
   return (
     <section className="home">

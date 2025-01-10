@@ -144,7 +144,6 @@ export const appwrite_signUp = async ({
     console.log("✅ Session cookie created successfully");
 
     console.log("✅ User created process successfull");
-    console.log(newUser);
     return parseStringify(newUser);
   } catch (error) {
     errorHandler("There was a error in appwrite_signUp", error);
@@ -205,7 +204,7 @@ export const createLinkToken = async (user: User) => {
     };
 
     const response = await plaidClient.linkTokenCreate(tokenParams);
-    console.log("✅ Link token request successfully:", response.data);
+    console.log("✅ Link token request successfully");
 
     return parseStringify({ linkToken: response.data.link_token });
   } catch (error) {
@@ -227,7 +226,6 @@ export const createBankAccount = async ({
     const { database } = await createAdminClient();
 
     console.log("Sending bank data to bankend...");
-    console.log("[DEBUG] for userID: ", userId);
     const bankAccount = await database.createDocument(
       DATABASE!,
       BANK_COLLECTION!,
@@ -342,7 +340,6 @@ export const getBank = async ({ documentId }: getBankProps) => {
     ]);
 
     console.log("✅ Bank document fetched successfully");
-    console.log(bank.documents[0]); // coming correctly✅
     return parseStringify(bank.documents[0]);
   } catch (error) {
     errorHandler("There was a error in getBank", error);
@@ -361,7 +358,6 @@ export const getBanks = async ({ userDocumentId }: getBanksProps) => {
     ]);
 
     console.log("✅ Banks fetched successfully");
-    console.log(banks.documents);
     return parseStringify(banks.documents);
   } catch (error) {
     errorHandler("There was a error in getBanks", error);

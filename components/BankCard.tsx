@@ -33,7 +33,7 @@ const BankCard = ({
             </div>
             <p className="text-14 font-semibold tracking-[1.1px] text-white">
               {/* last 4 digit of card number */}
-              ●●●● ●●●● ●●●● <span className="text-16">{1234}</span>
+              ●●●● ●●●● ●●●● <span className="text-16">{account?.mask}</span>
             </p>
           </article>
         </div>
