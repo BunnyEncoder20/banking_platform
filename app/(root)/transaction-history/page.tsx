@@ -11,7 +11,7 @@ import { getAccount, getAccounts } from "@/lib/actions/bank.actions";
 import { formatAmount } from "@/lib/utils";
 import TransactionsTable from "@/components/TransactionsTable";
 
-// current component ⚛️
+// current page 📄
 const transactionHistoryPage = async (
   { searchParams: { id, page } }: SearchParamProps,
 ) => {

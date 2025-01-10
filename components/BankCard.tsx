@@ -4,6 +4,7 @@ import React from "react";
 // utils
 import { formatAmount } from "@/lib/utils";
 import Image from "next/image";
+import Copy from "./Copy";
 
 // current component ⚛️\
 const BankCard = ({
@@ -14,7 +15,10 @@ const BankCard = ({
   return (
     <div className="flex flex-col">
       {/* TODO: make card point to bank account details */}
-      <Link href="/" className="bank-card">
+      <Link
+        href={`/transaction-history/?id=${account?.appwriteItemId}`}
+        className="bank-card min-w-[325px]"
+      >
         <div className="bank-card_content">
           <div>
             <h1 className="text-16 font-semibold text-white">
@@ -63,7 +67,7 @@ const BankCard = ({
         />
       </Link>
 
-      {/* TODO: Function/comp to copy card numbers */}
+      {showBalance && <Copy title={account?.sharableId} />}
     </div>
   );
 };
