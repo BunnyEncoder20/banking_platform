@@ -363,3 +363,24 @@ export const getBanks = async ({ userDocumentId }: getBanksProps) => {
     errorHandler("There was a error in getBanks", error);
   }
 };
+
+export const getBankByAccountId = async ({
+  accountId,
+}: getBankByAccountIdProps) => {
+  console.log(`Getting bank document by accountId: ${accountId}...`);
+  try {
+    console.log("Creating admin client...");
+    const { database } = await createAdminClient();
+
+    const bank = await database.listDocuments(DATABASE!, BANK_COLLECTION!, [
+      Query.equal("accountId", [accountId]),
+    ]);
+
+    if (bank.total !== 1) return null;
+
+    console.log("✅ Bank document fetched successfully");
+    return parseStringify(bank.documents[0]);
+  } catch (error) {
+    errorHandler("There was a error in getBank", error);
+  }
+};
