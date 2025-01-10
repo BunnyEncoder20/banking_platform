@@ -16,6 +16,7 @@ import {
   createLinkToken,
   exchangePublicToken,
 } from "@/lib/actions/user.actions";
+import Image from "next/image";
 
 // current component ⚛️
 const PlaidLink = ({
@@ -69,8 +70,40 @@ const PlaidLink = ({
           </Button>
         )
         : variant === "ghost"
-        ? <Button>Connect Bank</Button>
-        : <Button>Connect Bank</Button>}
+        ? (
+          <Button
+            variant="ghost"
+            className="plaidlink-ghost"
+            onClick={() => open()}
+          >
+            <Image
+              src="/icons/connect-bank.svg"
+              alt="connect bank"
+              height={24}
+              width={24}
+            />
+            <p className=" hidden text-[16px] font-semibold text-black-2 xl:block">
+              Connect Bank
+            </p>
+            Connect Bank
+          </Button>
+        )
+        : (
+          <Button
+            className="plaidlink-default"
+            onClick={() => open()}
+          >
+            <Image
+              src="/icons/connect-bank.svg"
+              alt="connect bank"
+              height={24}
+              width={24}
+            />
+            <p className="text-[16px] font-semibold text-black-2 max-xl:hidden">
+              Connect Bank
+            </p>
+          </Button>
+        )}
     </>
   );
 };

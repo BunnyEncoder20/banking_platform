@@ -12,13 +12,14 @@ import { usePathname } from "next/navigation";
 
 // components
 import Footer from "@/components/Footer";
+import PlaidLink from "@/components/PlaidLink";
 
 // current component ⚛️
 const Sidebar = ({ user }: SiderbarProps) => {
   // path
   const pathname = usePathname();
   return (
-    <section className="sidebar">
+    <section className="sidebar z-10">
       <nav className="flex flex-col gap-4">
         {/* logo */}
         <Link href="/" className="mb-12 cursor-pointer flex items-center gap-2">
@@ -62,6 +63,8 @@ const Sidebar = ({ user }: SiderbarProps) => {
             </Link>
           );
         })}
+
+        <PlaidLink user={user} />
       </nav>
 
       {/* TODO: Footer */}
