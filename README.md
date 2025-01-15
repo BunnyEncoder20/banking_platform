@@ -10,7 +10,7 @@
 #### Login Credentials (for demo)
 
 - username: varun.verma2024@gmail.com
-- password: password
+- password: admin123
 
 ## Tech Stack
 
